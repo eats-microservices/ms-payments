@@ -44,7 +44,6 @@ public class PaymentController {
         repository.save(updatedPayment);
 
         PaymentDoneDto paymentDoneDto = new PaymentDoneDto(updatedPayment.getOrderId(), updatedPayment.getUserId());
-//        rabbitTemplate.send("payments.payment-done", new Message(paymentDoneDto.toString().getBytes()));
         rabbitTemplate.convertAndSend("payments.ex", "payments.payment-done", paymentDoneDto);
         return ResponseEntity.ok().build();
     }
@@ -52,13 +51,53 @@ public class PaymentController {
 
     @PostMapping("/pay/{orderId}/pix")
     public ResponseEntity<?> payWithPix(@PathVariable Long orderId, @RequestBody PayWithPix request) {
-        return null;
+        Optional<Payment> possiblePayment = repository.findByOrderId(orderId);
+
+        if (possiblePayment.isEmpty()) {
+            throw new ResourceNotFoundException("Payment not found with this order id: " + orderId);
+        }
+
+        Payment payment = possiblePayment.get();
+        Payment updatedPayment = new Payment(
+                payment.getId(),
+                payment.getUserId(),
+                payment.getOrderId(),
+                payment.getReceivedAt(),
+                true,
+                Instant.now(),
+                PaymentType.PIX);
+
+        repository.save(updatedPayment);
+
+        PaymentDoneDto paymentDoneDto = new PaymentDoneDto(updatedPayment.getOrderId(), updatedPayment.getUserId());
+        rabbitTemplate.convertAndSend("payments.ex", "payments.payment-done", paymentDoneDto);
+        return ResponseEntity.ok().build();
     }
 
 
     @PostMapping("/pay/{orderId}/cash")
     public ResponseEntity<?> payWithCash(@PathVariable Long orderId) {
-        return null;
+        Optional<Payment> possiblePayment = repository.findByOrderId(orderId);
+
+        if (possiblePayment.isEmpty()) {
+            throw new ResourceNotFoundException("Payment not found with this order id: " + orderId);
+        }
+
+        Payment payment = possiblePayment.get();
+        Payment updatedPayment = new Payment(
+                payment.getId(),
+                payment.getUserId(),
+                payment.getOrderId(),
+                payment.getReceivedAt(),
+                true,
+                Instant.now(),
+                PaymentType.CASH);
+
+        repository.save(updatedPayment);
+
+        PaymentDoneDto paymentDoneDto = new PaymentDoneDto(updatedPayment.getOrderId(), updatedPayment.getUserId());
+        rabbitTemplate.convertAndSend("payments.ex", "payments.payment-done", paymentDoneDto);
+        return ResponseEntity.ok().build();
     }
 
 
