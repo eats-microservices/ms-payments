@@ -12,19 +12,21 @@ public class Payment {
     private Long id;
     private Long userId;
     private Long orderId;
-    private PaymentType type;
     private Instant receivedAt;
+    private Boolean isPayed;
     private Instant payedAt;
+    private PaymentType type;
 
     @Deprecated
     public Payment() {}
 
-    public Payment(Long userId, Long orderId, PaymentType type, Instant receivedAt, Instant payedAt) {
+    public Payment(Long userId, Long orderId, Instant receivedAt, Boolean isPayed, Instant payedAt, PaymentType type) {
         this.userId = userId;
         this.orderId = orderId;
-        this.type = type;
         this.receivedAt = receivedAt;
+        this.isPayed = isPayed;
         this.payedAt = payedAt;
+        this.type = type;
     }
 
     public Long getId() {
