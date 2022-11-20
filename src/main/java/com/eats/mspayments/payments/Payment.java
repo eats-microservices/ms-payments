@@ -15,10 +15,21 @@ public class Payment {
     private Instant receivedAt;
     private Boolean isPayed;
     private Instant payedAt;
+    @Enumerated(EnumType.STRING)
     private PaymentType type;
 
     @Deprecated
     public Payment() {}
+
+    public Payment(Long id, Long userId, Long orderId, Instant receivedAt, Boolean isPayed, Instant payedAt, PaymentType type) {
+        this.id = id;
+        this.userId = userId;
+        this.orderId = orderId;
+        this.receivedAt = receivedAt;
+        this.isPayed = isPayed;
+        this.payedAt = payedAt;
+        this.type = type;
+    }
 
     public Payment(Long userId, Long orderId, Instant receivedAt, Boolean isPayed, Instant payedAt, PaymentType type) {
         this.userId = userId;
