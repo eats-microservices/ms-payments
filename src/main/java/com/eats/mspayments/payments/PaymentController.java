@@ -3,7 +3,6 @@ package com.eats.mspayments.payments;
 import com.eats.mspayments.exceptions.ResourceNotFoundException;
 import com.eats.mspayments.payments.dtos.PayWithCardRequest;
 import com.eats.mspayments.payments.dtos.PayWithPix;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +38,7 @@ public class PaymentController {
                 payment.getReceivedAt(),
                 true,
                 Instant.now(),
-                request.getCredit() == true ? PaymentType.CREDIT_CARD : PaymentType.DEBIT_CARD);
+                request.getCredit() ? PaymentType.CREDIT_CARD : PaymentType.DEBIT_CARD);
 
         repository.save(updatedPayment);
 
@@ -101,9 +100,9 @@ public class PaymentController {
     }
 
 
-    class PaymentDoneDto {
-        private Long id;
-        private Long userId;
+    static class PaymentDoneDto {
+        private final Long id;
+        private final Long userId;
 
         public PaymentDoneDto(Long id, Long userId) {
             this.id = id;
